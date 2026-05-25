@@ -30,32 +30,10 @@ jobs:
           cd lizeth-garcia-portfolio/client
           npm install --legacy-peer-deps
       
-      # CORRECCIÓN: Usamos --legacy-peer-deps también en el build
       - name: Build
         run: |
           cd lizeth-garcia-portfolio/client
-          npm run build --legacy-peer-deps || npm run build -- --force
-      
-      # Verificación: ¿Se creó la carpeta dist?
-      - name: Check dist folder
-        run: |
-          cd lizeth-garcia-portfolio/client
-          if [ -d "dist" ]; then
-            echo "Success: dist folder created."
-            ls -la dist
-          else
-            echo "Error: dist folder NOT created!"
-            echo "Attempting fallback build..."
-            # Intento de fallback: construir sin plugins problemáticos
-            npm install --legacy-peer-deps --no-optional
-            npm run build -- --force || true
-            if [ -d "dist" ]; then
-              echo "Fallback successful."
-            else
-              echo "Fatal: Could not create dist folder."
-              exit 1
-            fi
-          fi
+          npm run build || npm run build -- --force
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
@@ -70,3 +48,5 @@ jobs:
     needs: build
     steps:
       - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
