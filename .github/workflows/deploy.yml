@@ -25,11 +25,11 @@ jobs:
         with:
           node-version: '20'
       
-      # CORRECCIÓN: Entramos primero a lizeth-garcia-portfolio, luego a client
+      # CORRECCIÓN: Usamos --legacy-peer-deps para ignorar el conflicto de Vite
       - name: Install dependencies
         run: |
           cd lizeth-garcia-portfolio/client
-          npm install
+          npm install --legacy-peer-deps
       
       - name: Build
         run: |
@@ -39,7 +39,6 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # La ruta de salida también debe incluir la carpeta anidada
           path: './lizeth-garcia-portfolio/client/dist'
 
   deploy:
