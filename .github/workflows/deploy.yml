@@ -24,21 +24,55 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          # Desactivamos cache por ahora para evitar conflictos
+          # cache: 'npm' 
       
+      # Paso 1: Verificar que estamos en la carpeta correcta
+      - name: List files in root
+        run: ls -la
+      
+      - name: List files in client
+        run: |
+          cd client
+          ls -la
+      
+      # Paso 2: Instalar dependencias
       - name: Install dependencies
-        # Entramos a la carpeta 'client' donde está el package.json
         run: |
           cd client
-          npm install
+          if [ -f "package.json" ]; then
+            echo "package.json found. Installing..."
+            npm install
+          else
+            echo "ERROR: package.json NOT found in client folder!"
+            exit 1
+          fi
       
+      # Paso 3: Construir el proyecto
       - name: Build
-        # Ejecutamos el build dentro de 'client'
         run: |
           cd client
-          npm run build
+          if [ -f "package.json" ]; then
+            echo "Building project..."
+            npm run build
+          else
+            echo "ERROR: Cannot build, package.json missing."
+            exit 1
+          fi
+      
+      # Paso 4: Verificar que se creó la carpeta dist
+      - name: List files in client/dist
+        run: |
+          cd client
+          if [ -d "dist" ]; then
+            echo "dist folder found. Contents:"
+            ls -la dist
+          else
+            echo "ERROR: dist folder NOT created!"
+            exit 1
+          fi
       
       - name: Upload artifact
-        # Subimos la carpeta 'dist' que se generó dentro de 'client'
         uses: actions/upload-pages-artifact@v3
         with:
           path: './client/dist'
