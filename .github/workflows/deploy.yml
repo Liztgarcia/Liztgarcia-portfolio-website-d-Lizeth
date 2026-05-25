@@ -24,58 +24,23 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          # Desactivamos cache por ahora para evitar conflictos
-          # cache: 'npm' 
       
-      # Paso 1: Verificar que estamos en la carpeta correcta
-      - name: List files in root
-        run: ls -la
-      
-      - name: List files in client
-        run: |
-          cd client
-          ls -la
-      
-      # Paso 2: Instalar dependencias
+      # CORRECCIÓN: Entramos primero a lizeth-garcia-portfolio, luego a client
       - name: Install dependencies
         run: |
-          cd client
-          if [ -f "package.json" ]; then
-            echo "package.json found. Installing..."
-            npm install
-          else
-            echo "ERROR: package.json NOT found in client folder!"
-            exit 1
-          fi
+          cd lizeth-garcia-portfolio/client
+          npm install
       
-      # Paso 3: Construir el proyecto
       - name: Build
         run: |
-          cd client
-          if [ -f "package.json" ]; then
-            echo "Building project..."
-            npm run build
-          else
-            echo "ERROR: Cannot build, package.json missing."
-            exit 1
-          fi
-      
-      # Paso 4: Verificar que se creó la carpeta dist
-      - name: List files in client/dist
-        run: |
-          cd client
-          if [ -d "dist" ]; then
-            echo "dist folder found. Contents:"
-            ls -la dist
-          else
-            echo "ERROR: dist folder NOT created!"
-            exit 1
-          fi
+          cd lizeth-garcia-portfolio/client
+          npm run build
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './client/dist'
+          # La ruta de salida también debe incluir la carpeta anidada
+          path: './lizeth-garcia-portfolio/client/dist'
 
   deploy:
     environment:
